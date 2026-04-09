@@ -17,45 +17,127 @@ class List {
 public:
 
   //EFFECTS:  returns true if the list is empty
-  bool empty() const;
+  bool empty() const{
+    return _size == 0;
+  }
 
   //EFFECTS: returns the number of elements in this List
   //HINT:    Traversing a list is really slow. Instead, keep track of the size
   //         with a private member variable. That's how std::list does it.
-  int size() const;
+  int size() const{
+    return _size;
+  }
 
   //REQUIRES: list is not empty
   //EFFECTS: Returns the first element in the list by reference
-  T & front();
+  T & front(){
+    assert(!empty());
+    return first->datum;
+  }
 
   //REQUIRES: list is not empty
   //EFFECTS: Returns the last element in the list by reference
-  T & back();
+  T & back(){
+    assert(!empty());
+    return last->datum;
+  }
 
   //EFFECTS:  inserts datum into the front of the list
-  void push_front(const T &datum);
+  void push_front(const T &datum){
+    Node *p = new Node;
+    p->datum = datum;
+    p->prev = nullptr;
+    p->next = first;
+
+    if (empty()) {
+      first = last = p;
+    } 
+    else {
+      first->prev = p;
+      first = p;
+    }
+    ++_size;
+  }
 
   //EFFECTS:  inserts datum into the back of the list
-  void push_back(const T &datum);
+  void push_back(const T &datum){
+    Node *p = new Node;
+    p->datum = datum;
+    p->next = nullptr;
+    p->prev = last;
+
+    if (empty()) {
+      first = last = p;
+    } else {
+      last->next = p;
+      last = p;
+    }
+    ++_size;
+  }
 
   //REQUIRES: list is not empty
   //MODIFIES: invalidates all iterators to the removed element
   //EFFECTS:  removes the item at the front of the list
-  void pop_front();
+  void pop_front(){
+    assert(!empty());
+
+    Node *temp = first;
+    first = first->next;
+
+    if (first) {
+      first->prev = nullptr;
+    } 
+    else {
+      last = nullptr; 
+    }
+    delete temp;
+    --_size;
+  }
 
   //REQUIRES: list is not empty
   //MODIFIES: invalidates all iterators to the removed element
   //EFFECTS:  removes the item at the back of the list
-  void pop_back();
+  void pop_back(){
+    assert(!empty());
+    Node *temp = last;
+    last = last->prev;
+
+    if (last) {
+      last->next = nullptr;
+    } else {
+      first = nullptr;
+    }
+    delete temp;
+    --_size;
+  }
 
   //MODIFIES: invalidates all iterators to the removed elements
   //EFFECTS:  removes all items from the list
-  void clear();
+  void clear(){
+    while (!empty()) {
+      pop_front();
+    }
+  }
 
   // You should add in a default constructor, destructor, copy constructor,
   // and overloaded assignment operator, if appropriate. If these operations
   // will work correctly without defining these, you should omit them. A user
   // of the class must be able to create, copy, assign, and destroy Lists.
+
+  List() : first(nullptr), last(nullptr), _size(0) {}
+
+  ~List() {
+    clear();
+  }
+  void copy_all(const List<T> &other) {
+    for (Node *curr = other.first; curr != nullptr; curr = curr->next) {
+      push_back(curr->datum);
+    }
+  }
+
+  List(const List &other) : first(nullptr), last(nullptr), size_(0) {
+    copy_all(other);
+}
 
 private:
   //a private type
@@ -71,6 +153,8 @@ private:
 
   Node *first;   // points to first Node in list, or nullptr if list is empty
   Node *last;    // points to last Node in list, or nullptr if list is empty
+
+  size_t _size;
 
 public:
   ////////////////////////////////////////
