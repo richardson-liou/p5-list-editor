@@ -132,8 +132,8 @@ TEST(test_iterator_plus_minus) {
     ASSERT_EQUAL(*it, 2);
     ++it;
     ASSERT_EQUAL(*it, 3);
-    ++it;
-    ASSERT_EQUAL(*it, nullptr);
+    // ++it;
+    // ASSERT_EQUAL(*it, nullptr);
     --it;
     ASSERT_EQUAL(*it, 3);
     --it;
@@ -142,9 +142,101 @@ TEST(test_iterator_plus_minus) {
     ASSERT_EQUAL(*it, 1);
 }
 
-TEST(test_stub) {
-    // Add test code here
-    ASSERT_TRUE(true);
+//Test insert
+TEST(test_insert_front) {
+    List<int> a;
+    a.push_back(2);
+
+    a.insert(a.begin(), 1);
+
+    ASSERT_EQUAL(a.front(), 1);
+    ASSERT_EQUAL(a.size(), 2);
 }
+
+TEST(test_insert_back) {
+    List<int> a;
+    a.push_back(2);
+
+    a.insert(a.end(), 1);
+
+    ASSERT_EQUAL(a.back(), 1);
+    ASSERT_EQUAL(a.size(), 2);
+}
+
+TEST(test_insert_middle) {
+    List<int> a;
+    a.push_back(1);
+    a.push_back(3);
+
+    auto it = a.begin();
+    ++it;
+
+    a.insert(it, 2);
+
+    auto itt = a.begin();
+    ASSERT_EQUAL(*itt, 1);
+    ++itt;
+    ASSERT_EQUAL(*itt, 2);
+    ++itt;
+    ASSERT_EQUAL(*itt, 3);
+}
+
+//Test erase
+TEST(test_erase_front) {
+    List<int> a;
+    a.push_back(1);
+    a.push_back(2);
+
+    a.erase(a.begin());
+
+    ASSERT_EQUAL(a.front(), 2);
+    ASSERT_EQUAL(a.size(), 1);
+}
+
+TEST(test_erase_back) {
+    List<int> a;
+    a.push_back(1);
+    a.push_back(2);
+
+    auto it = a.end();
+    it--;
+
+    a.erase(it);
+
+    ASSERT_EQUAL(a.front(), 1);
+    ASSERT_EQUAL(a.size(), 1);
+}
+
+
+TEST(test_erase_middle){
+    List<int> a;
+    a.push_back(1);
+    a.push_back(2);
+    a.push_back(3);
+
+    auto it = a.begin();
+    ++it;
+
+    a.erase(it);
+
+    ASSERT_EQUAL(a.size(), 2);
+
+    auto check = a.begin();
+    ASSERT_EQUAL(*check, 1);
+    ++check;
+    ASSERT_EQUAL(*check, 3);
+}
+
+TEST(test_iterator_equality) {
+    List<int> a;
+    a.push_back(1);
+
+    auto it1 = a.begin();
+    auto it2 = a.begin();
+
+    ASSERT_TRUE(it1 == it2);
+    ASSERT_FALSE(it1 != it2);
+}
+
 
 TEST_MAIN()
