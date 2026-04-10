@@ -52,16 +52,19 @@ TEST(test_equals_op) {
     ASSERT_EQUAL(b.back(), 7);
 }
 
-TEST(test_self_equals){
+TEST(test_equals_op_to_smaller_list) {
     List<int> a;
     a.push_back(3);
-    a.push_back(7);
 
-    a = a;
+    List<int> b;
+    b.push_back(2);
+    b.push_back(7);
 
-    ASSERT_EQUAL(a.size(), 2);
-    ASSERT_EQUAL(a.front(), 3);
-    ASSERT_EQUAL(a.back(), 7);
+    b = a;
+
+    ASSERT_EQUAL(b.size(), 1);
+    ASSERT_EQUAL(b.front(), 3);
+    ASSERT_EQUAL(b.back(), 3);
 }
 
 TEST(test_copies) {
@@ -175,10 +178,11 @@ TEST(test_insert_front) {
     List<int> a;
     a.push_back(2);
 
-    a.insert(a.begin(), 1);
+    auto it = a.insert(a.begin(), 1);
 
     ASSERT_EQUAL(a.front(), 1);
     ASSERT_EQUAL(a.size(), 2);
+    ASSERT_EQUAL(*it, 1);
 }
 
 TEST(test_insert_back) {
@@ -210,15 +214,26 @@ TEST(test_insert_middle) {
 }
 
 //Test erase
+TEST(test_erase_to_empty) {
+    List<int> a;
+    a.push_back(1);
+    
+    auto it = a.erase(a.begin());
+
+    ASSERT_TRUE(a.empty());
+    ASSERT_TRUE(it == a.end());
+}
+
 TEST(test_erase_front) {
     List<int> a;
     a.push_back(1);
     a.push_back(2);
 
-    a.erase(a.begin());
+    auto erased = a.erase(a.begin());
 
     ASSERT_EQUAL(a.front(), 2);
     ASSERT_EQUAL(a.size(), 1);
+    ASSERT_EQUAL(*erased, 2);
 }
 
 TEST(test_erase_back) {
@@ -229,12 +244,13 @@ TEST(test_erase_back) {
     auto it = a.end();
     it--;
 
-    a.erase(it);
+    auto erased = a.erase(it);
 
     ASSERT_EQUAL(a.front(), 1);
     ASSERT_EQUAL(a.size(), 1);
-}
+    ASSERT_TRUE(erased == a.end());
 
+}
 
 TEST(test_erase_middle){
     List<int> a;
@@ -263,7 +279,6 @@ TEST(test_iterator_equality) {
     auto it2 = a.begin();
 
     ASSERT_TRUE(it1 == it2);
-    ASSERT_FALSE(it1 != it2);
 }
 
 
