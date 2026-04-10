@@ -68,7 +68,8 @@ public:
 
     if (empty()) {
       first = last = p;
-    } else {
+    } 
+    else {
       last->next = p;
       last = p;
     }
@@ -104,7 +105,8 @@ public:
 
     if (last) {
       last->next = nullptr;
-    } else {
+    } 
+    else {
       first = nullptr;
     }
     delete temp;
