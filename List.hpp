@@ -129,14 +129,17 @@ public:
   ~List() {
     clear();
   }
-  void copy_all(const List<T> &other) {
-    for (Node *curr = other.first; curr != nullptr; curr = curr->next) {
-      push_back(curr->datum);
-    }
-  }
 
-  List(const List &other) : first(nullptr), last(nullptr), size_(0) {
+  List(const List &other) : first(nullptr), last(nullptr), _size(0) {
     copy_all(other);
+}
+
+  List& operator=(const List &other) {
+    if (this != &other) {
+      clear();
+      copy_all(other);
+    }
+    return *this;
 }
 
 private:
@@ -149,12 +152,16 @@ private:
 
   //REQUIRES: list is empty
   //EFFECTS:  copies all nodes from other to this
-  void copy_all(const List<T> &other);
+  void copy_all(const List<T> &other){
+    for (Node *curr = other.first; curr != nullptr; curr = curr->next) {
+      push_back(curr->datum);
+    }
+  }
 
   Node *first;   // points to first Node in list, or nullptr if list is empty
   Node *last;    // points to last Node in list, or nullptr if list is empty
 
-  size_t _size;
+  int _size;
 
 public:
   ////////////////////////////////////////
@@ -165,13 +172,13 @@ public:
     // Add a default constructor here. The default constructor must set both
     // pointer members to null pointers.
 
+    Iterator() : list_ptr(nullptr), node_ptr(nullptr) {}
 
 
     // Add custom implementations of the destructor, copy constructor, and
     // overloaded assignment operator, if appropriate. If these operations
     // will work correctly without defining these, you should omit them. A user
     // of the class must be able to copy, assign, and destroy Iterators.
-
 
 
     // Your iterator should implement the following public operators:
@@ -193,6 +200,30 @@ public:
     // Note: comparing both the list and node pointers should be
     // sufficient to meet these requirements.
 
+    T& operator*()const{
+      assert(node_ptr);
+      return node_ptr->datum;
+    }
+
+    Iterator& operator++(){
+      assert(node_ptr);
+      node_ptr = node_ptr->next;
+      return *this;
+    }
+
+    Iterator operator++(int) {
+      Iterator copy = *this;
+      ++(*this);
+      return copy;
+    }
+
+    bool operator==(const Iterator &other) const {
+      return node_ptr == other.node_ptr && list_ptr == other.list_ptr;
+    }
+
+    bool operator!=(const Iterator &other) const {
+      return !(*this == other);
+    }
 
 
     // Type aliases required to work with STL algorithms. Do not modify these.
@@ -247,31 +278,77 @@ public:
 
 
     // add any friend declarations here
-
+    friend class List;
 
     // construct an Iterator at a specific position in the given List
-    Iterator(const List *lp, Node *np);
+    Iterator(const List *lp, Node *np) : list_ptr(lp), node_ptr(np) {}
 
   };//List::Iterator
   ////////////////////////////////////////
 
   // return an Iterator pointing to the first element
-  Iterator begin() const;
+  Iterator begin() const{
+    return Iterator(this, first);
+  }
 
   // return an Iterator pointing to "past the end"
-  Iterator end() const;
+  Iterator end() const{
+    return Iterator(this, nullptr);
+  }
 
   //REQUIRES: i is a valid, dereferenceable iterator associated with this list
   //MODIFIES: invalidates all iterators to the removed element
   //EFFECTS: Removes a single element from the list container.
   //         Returns An iterator pointing to the element that followed the
   //         element erased by the function call
-  Iterator erase(Iterator i);
+  Iterator erase(Iterator i){
+    assert(i.node_ptr);
+    Node *to_delete = i.node_ptr;
+    Node *next_node = to_delete->next;
+
+    if (to_delete->prev) {
+      to_delete->prev->next = to_delete->next;
+    } else {
+      first = to_delete->next;
+    }
+
+    if (to_delete->next) {
+      to_delete->next->prev = to_delete->prev;
+    } else {
+      last = to_delete->prev;
+    }
+
+    delete to_delete;
+    --_size;
+
+    return Iterator(this, next_node);
+  }
 
   //REQUIRES: i is a valid iterator associated with this list
   //EFFECTS: Inserts datum before the element at the specified position.
   //         Returns an iterator to the the newly inserted element.
-  Iterator insert(Iterator i, const T &datum);
+  Iterator insert(Iterator i, const T &datum){
+    if (i.node_ptr == first) {
+      push_front(datum);
+      return begin();
+    } 
+    else if (i.node_ptr == nullptr) {
+      push_back(datum);
+      return Iterator(this, last);
+      } 
+    else {
+      Node *new_node = new Node;
+      new_node->datum = datum;
+      new_node->next = i.node_ptr;
+      new_node->prev = i.node_ptr->prev;
+
+      i.node_ptr->prev->next = new_node;
+      i.node_ptr->prev = new_node;
+
+      ++_size;
+      return Iterator(this, new_node);
+      }
+  }
 
 };//List
 
