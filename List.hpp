@@ -308,13 +308,15 @@ public:
 
     if (to_delete->prev) {
       to_delete->prev->next = to_delete->next;
-    } else {
+    } 
+    else {
       first = to_delete->next;
     }
 
     if (to_delete->next) {
       to_delete->next->prev = to_delete->prev;
-    } else {
+    } 
+    else {
       last = to_delete->prev;
     }
 

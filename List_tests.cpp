@@ -52,6 +52,29 @@ TEST(test_equals_op) {
     ASSERT_EQUAL(b.back(), 7);
 }
 
+TEST(test_self_equals){
+    List<int> a;
+    a.push_back(3);
+    a.push_back(7);
+
+    a = a;
+
+    ASSERT_EQUAL(a.size(), 2);
+    ASSERT_EQUAL(a.front(), 3);
+    ASSERT_EQUAL(a.back(), 7);
+}
+
+TEST(test_copies) {
+    List<int> a;
+    a.push_back(1);
+
+    List<int> b = a;
+    b.push_back(2);
+
+    ASSERT_EQUAL(a.size(), 1);
+    ASSERT_EQUAL(b.size(), 2);
+}
+
 //Test push_front on empty and non-empty list
 TEST(test_push_front_mult) {
     List<int> a;
@@ -95,7 +118,7 @@ TEST(test_pop_front_not_empty){
 
     ASSERT_EQUAL(a.size(), 2);
     ASSERT_EQUAL(a.front(), 3);
-    ASSERT_EQUAL(a.back(), 1);
+    ASSERT_EQUAL(a.back(), 5);
 }
 
 TEST(test_pop_back_single_elt) {
@@ -132,14 +155,19 @@ TEST(test_iterator_plus_minus) {
     ASSERT_EQUAL(*it, 2);
     ++it;
     ASSERT_EQUAL(*it, 3);
-    // ++it;
-    // ASSERT_EQUAL(*it, nullptr);
+    ++it;
+    ASSERT_TRUE(it == a.end());
     --it;
     ASSERT_EQUAL(*it, 3);
     --it;
     ASSERT_EQUAL(*it, 2);
     --it;
     ASSERT_EQUAL(*it, 1);
+}
+
+TEST(test_iterator_empty_list) {
+    List<int> a;
+    ASSERT_TRUE(a.begin() == a.end());
 }
 
 //Test insert
