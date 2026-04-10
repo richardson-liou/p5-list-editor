@@ -78,6 +78,70 @@ TEST(test_push_back_mult) {
 }
 
 //Test pop_front and pop_back on empty and non-empty list
+TEST(test_pop_front_single_elt) {
+    List<int> a;
+    a.push_back(1);
+    a.pop_front();
+
+    ASSERT_TRUE(a.empty());
+}
+
+TEST(test_pop_front_not_empty){
+    List<int> a;
+    a.push_back(1);
+    a.push_back(3);
+    a.push_back(5);
+    a.pop_front();
+
+    ASSERT_EQUAL(a.size(), 2);
+    ASSERT_EQUAL(a.front(), 3);
+    ASSERT_EQUAL(a.back(), 1);
+}
+
+TEST(test_pop_back_single_elt) {
+    List<int> a;
+    a.push_back(1);
+    a.pop_back();
+
+    ASSERT_TRUE(a.empty());
+}
+
+TEST(test_pop_back_not_empty){
+    List<int> a;
+    a.push_back(1);
+    a.push_back(3);
+    a.push_back(5);
+    a.pop_back();
+
+    ASSERT_EQUAL(a.size(), 2);
+    ASSERT_EQUAL(a.front(), 1);
+    ASSERT_EQUAL(a.back(), 3);
+}
+
+//Test iterator iteration
+TEST(test_iterator_plus_minus) {
+    List<int> a;
+    a.push_back(1);
+    a.push_back(2);
+    a.push_back(3);
+
+    auto it = a.begin();
+
+    ASSERT_EQUAL(*it, 1);
+    ++it;
+    ASSERT_EQUAL(*it, 2);
+    ++it;
+    ASSERT_EQUAL(*it, 3);
+    ++it;
+    ASSERT_EQUAL(*it, nullptr);
+    --it;
+    ASSERT_EQUAL(*it, 3);
+    --it;
+    ASSERT_EQUAL(*it, 2);
+    --it;
+    ASSERT_EQUAL(*it, 1);
+}
+
 TEST(test_stub) {
     // Add test code here
     ASSERT_TRUE(true);
