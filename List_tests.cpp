@@ -67,6 +67,48 @@ TEST(test_equals_op_to_smaller_list) {
     ASSERT_EQUAL(b.back(), 3);
 }
 
+TEST(test_assign_empty) {
+    List<int> a;
+    a.push_back(1);
+    a.push_back(2);
+
+    List<int> b;
+
+    a = b;
+
+    ASSERT_TRUE(a.empty());
+    ASSERT_EQUAL(a.size(), 0);
+}
+
+TEST(test_assign_to_empty_target) {
+    List<int> a;
+
+    List<int> b;
+    b.push_back(1);
+    b.push_back(2);
+
+    a = b;
+
+    ASSERT_EQUAL(a.size(), 2);
+    ASSERT_EQUAL(a.front(), 1);
+    ASSERT_EQUAL(a.back(), 2);
+}
+
+
+TEST(test_assign_to_empty) {
+    List<int> a;
+
+    List<int> b;
+    b.push_back(1);
+    b.push_back(2);
+
+    a = b;
+
+    ASSERT_EQUAL(a.size(), 2);
+    ASSERT_EQUAL(a.front(), 1);
+    ASSERT_EQUAL(a.back(), 2);
+}
+
 TEST(test_copies) {
     List<int> a;
     a.push_back(1);
@@ -279,6 +321,19 @@ TEST(test_iterator_equality) {
     auto it2 = a.begin();
 
     ASSERT_TRUE(it1 == it2);
+}
+
+TEST(test_erase_all) {
+    List<int> a;
+    a.push_back(1);
+    a.push_back(2);
+    a.push_back(3);
+
+    while (!a.empty()) {
+        a.erase(a.begin());
+    }
+
+    ASSERT_TRUE(a.empty());
 }
 
 

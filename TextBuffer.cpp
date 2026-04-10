@@ -41,7 +41,7 @@ bool TextBuffer::backward() {
 
 void TextBuffer::insert(char c) {
     data.insert(cursor, c);
-
+    ++index;
     if (c == '\n') {
         ++row;
         column = 0;
@@ -49,8 +49,6 @@ void TextBuffer::insert(char c) {
     else {
         ++column;
     }
-
-    ++index;
 }
 
 bool TextBuffer::remove() {
@@ -58,6 +56,7 @@ bool TextBuffer::remove() {
 
     char c = *cursor;
     cursor = data.erase(cursor);
+    --index;
 
     if (c == '\n') {
         --row;
@@ -69,13 +68,11 @@ bool TextBuffer::remove() {
 
 void TextBuffer::move_to_row_start() {
     while (cursor != data.begin()) {
+        auto prev = cursor;
+        --prev;
+        if (*prev == '\n') break;
         --cursor;
         --index;
-        if (*cursor == '\n') {
-            ++cursor;
-            ++index;
-            break;
-        }
     }
     column = 0;
 }
@@ -104,27 +101,30 @@ bool TextBuffer::up(){
     int curr_col = column;
 
     move_to_row_start();
-  
-    if (cursor != data.begin()) {
-        backward();
-        
-        move_to_column(curr_col);
+    if (cursor == data.begin()) {
+        return false;
     }
+
+    backward();
+    move_to_row_start();
+    move_to_column(curr_col);
+
     return true;
 }
 
 bool TextBuffer::down(){
+    int start_index = index;
     int curr_col = column;
 
     move_to_row_end();
 
-    if (cursor != data.end() && *cursor == '\n') {
-        forward();
-    }
+    if (cursor == data.end()) return false;
+
+    forward();
 
     move_to_column(curr_col);
 
-    return true;
+    return index != start_index;
 }
 
 bool TextBuffer::is_at_end() const {
